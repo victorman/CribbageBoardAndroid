@@ -6,7 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorFilter;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +17,9 @@ import android.view.ViewGroup;
 public class MainActivity extends AppCompatActivity {
 
     private Context context;
+    private final float movableCanvasWidth = 2000f;
+    private final float movableCanvasHeight = 5000f;
+    private final float pegWidth = 60f;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,19 +28,35 @@ public class MainActivity extends AppCompatActivity {
         context = getApplicationContext();
 
 
-        final MovableCanvasView canvasView = new MovableCanvasView(context, 2000f,4000f);
+        final MovableCanvasView canvasView = new MovableCanvasView(context, movableCanvasWidth,movableCanvasHeight);
         canvasView.setOnTouchListener(new MoveViewFrameTouchListener(context));
 
-        ScaledDrawable drawable = new CircleDrawable();
-        drawable.setBounds(new Rect(200, 200, 300, 300));
-        ScaledDrawable drawable2 = new CircleDrawable();
-        drawable2.setBounds(new Rect(1580, 3580, 1680, 3680));
+        TrackDrawable outerTrack = new OuterTrackDrawable(context);
+        outerTrack.setBounds(0, 0, (int)movableCanvasWidth, (int)movableCanvasHeight);
+        TrackDrawable innerTrack = new InnerTrackDrawable(context);
+        innerTrack.setBounds(0,0,(int)movableCanvasWidth,(int)movableCanvasHeight);
+        canvasView.addTrack(innerTrack);
+        canvasView.addTrack(outerTrack);
 
-        ScaledDrawable drawable3 = new CircleDrawable();
-        drawable3.setBounds(new Rect(880, 1580, 1080, 1780));
-        canvasView.addDrawable(drawable);
-        canvasView.addDrawable(drawable2);
-        canvasView.addDrawable(drawable3);
+        Paint redPaint = new Paint();
+        redPaint.setColor(Color.RED);
+        redPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        Paint bluePaint = new Paint();
+        bluePaint.setColor(Color.BLUE);
+        bluePaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        PegDrawable peg1 = new PegDrawable(redPaint);
+        peg1.setBounds(200, (int)(movableCanvasHeight - 500), (int)(200 + pegWidth), (int)(movableCanvasHeight - 500 + pegWidth));
+        canvasView.addPeg(peg1);
+        PegDrawable peg2 = new PegDrawable(redPaint);
+        peg2.setBounds(200, (int)(movableCanvasHeight - 400), (int)(200 + pegWidth), (int)(movableCanvasHeight - 400 + pegWidth));
+        canvasView.addPeg(peg2);
+        PegDrawable peg3 = new PegDrawable(bluePaint);
+        peg3.setBounds(500, (int)(movableCanvasHeight - 500), (int)(500 + pegWidth), (int)(movableCanvasHeight - 500 + pegWidth));
+        canvasView.addPeg(peg3);
+        PegDrawable peg4 = new PegDrawable(bluePaint);
+        peg4.setBounds(500, (int)(movableCanvasHeight - 400), (int)(500 + pegWidth), (int)(movableCanvasHeight - 400 + pegWidth));
+        canvasView.addPeg(peg4);
+
 
         canvasView.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
@@ -62,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
         };
 
         Thread thread = new Thread(runnable);
-
 
         thread.start();
     }

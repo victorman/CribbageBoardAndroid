@@ -17,12 +17,12 @@ public abstract class ScaledDrawable extends Drawable {
 //        this.viewFieldRect = viewFieldRect;
 //    }
 
-    public RectF getScaledBounds() {
-        Rect oldBounds = getBounds();
-        return new RectF(oldBounds.left,
-                oldBounds.top,
-                (int)(oldBounds.left + oldBounds.width() * scale.getWidthScale()),
-                (int)(oldBounds.top + oldBounds.height() * scale.getHeightScale()));
-    }
+//    public RectF getScaledBounds() {
+//        Rect oldBounds = getBounds();
+//        return new RectF(oldBounds.left,
+//                oldBounds.top,
+//                (int)(oldBounds.left + oldBounds.width() * scale.getWidthScale()),
+//                (int)(oldBounds.top + oldBounds.height() * scale.getHeightScale()));
+//    }
 
 }

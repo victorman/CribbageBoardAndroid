@@ -10,22 +10,20 @@ import android.graphics.RectF;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public class CircleDrawable extends ScaledDrawable {
+public class PegDrawable extends ScaledDrawable {
     private final Paint paint;
 
-    public CircleDrawable() {
-        this.paint = new Paint();
-        paint.setColor(Color.RED);
-        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+    public PegDrawable(Paint paint) {
+        this.paint = paint;
     }
 
     @Override
     public void draw(@NonNull Canvas canvas) {
-        RectF r = getScaledBounds();
+        Rect r = getBounds();
         float cx = (r.left - viewFieldRect.left + r.width() / 2f);// * scale.getWidthScale();
         float cy = (r.top - viewFieldRect.top + r.height() / 2f);// * scale.getHeightScale();
         float radius = (Math.min(r.width(),r.height()) / 2f);// * scale.getWidthScale();
-        canvas.drawCircle(cx, cy, radius,paint);
+        canvas.drawCircle(cx, cy, radius, paint);
     }
 
     @Override

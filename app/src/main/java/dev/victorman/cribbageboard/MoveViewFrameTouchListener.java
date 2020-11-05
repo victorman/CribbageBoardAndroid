@@ -13,10 +13,12 @@ public class MoveViewFrameTouchListener implements View.OnTouchListener {
     private float lastTouchY;
     private float scaleFactor = 1.f;
     private MovableCanvasView canvasView;
+    private boolean pegLifted;
 
     public MoveViewFrameTouchListener(Context context) {
 
         scaleDetector = new ScaleGestureDetector(context, new ScaleListener());
+        pegLifted = false;
 
     }
 
@@ -28,7 +30,8 @@ public class MoveViewFrameTouchListener implements View.OnTouchListener {
 
         canvasView = (MovableCanvasView) view;
 
-        scaleDetector.onTouchEvent(motionEvent);
+        if(!pegLifted)
+            scaleDetector.onTouchEvent(motionEvent);
 
 
         switch (motionEvent.getAction()) {
@@ -38,15 +41,18 @@ public class MoveViewFrameTouchListener implements View.OnTouchListener {
                 // Remember where we started (for dragging)
                 lastTouchX = x;
                 lastTouchY = y;
+
                 // Save the ID of this pointer (for dragging)
                 activePointerId = motionEvent.getPointerId(pointerIndex);
+
+                if(!pegLifted)
+                    pegLifted = canvasView.liftPeg(x,y);
                 break;
             }
 
             case MotionEvent.ACTION_MOVE: {
                 // Find the index of the active pointer and fetch its position
-                final int pointerIndex =
-                        motionEvent.findPointerIndex(activePointerId);
+                final int pointerIndex = motionEvent.findPointerIndex(activePointerId);
 
 
                 // Calculate the distance moved
@@ -56,8 +62,10 @@ public class MoveViewFrameTouchListener implements View.OnTouchListener {
 //                posX += dx;
 //                posY += dy;
 
-
-                canvasView.fingerMove(dx, dy);
+                if(pegLifted)
+                    canvasView.movePeg((int)dx, (int)dy);
+                else
+                    canvasView.fingerMove(-dx, -dy);
 
                 // Remember this touch position for the next move event
                 lastTouchX = x;
@@ -67,6 +75,11 @@ public class MoveViewFrameTouchListener implements View.OnTouchListener {
             }
 
             case MotionEvent.ACTION_UP: {
+                if(pegLifted) {
+                    canvasView.dropPeg();
+                    pegLifted = false;
+                }
+                Log.i("touch", "up");
                 activePointerId = MotionEvent.INVALID_POINTER_ID;
                 break;
             }
@@ -88,6 +101,7 @@ public class MoveViewFrameTouchListener implements View.OnTouchListener {
                     lastTouchX = x;
                     lastTouchY = y;
                     activePointerId = motionEvent.getPointerId(newPointerIndex);
+
                 }
                 break;
             }
